@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,20 +12,18 @@
 
 
 
-typedef struct {
+typedef struct dot {
     int x;
     int y;
-    //radius
     int i;
     int dir;
     int color;
     int speed;
     int recoveryTime;
 
-    //infected = 1, healthy = 0, recovered = 2, going to DIE = 3
+    //infected = 1, healthy = 0, recovered = 2, going to die = 3
     int infected;
     int dead;
-
 } dot;
 
 // maxDots = # of dots - 1, arr[size]
@@ -35,7 +32,8 @@ void ChangeStatus();
 void ChangeDirection();
 
 int maxDots = 24;
-struct dot arr_allDots[25];
+
+dot arr_allDots[25];
 
 void CreateDots() {
     int cnt;
@@ -47,6 +45,7 @@ void CreateDots() {
     arr_allDots[cnt].i = 4;
     arr_allDots[cnt].dir = randInt(1,8);
     arr_allDots[cnt].speed = randInt(4,8);
+    //arr_allDots[cnt].recoveryTime =
 
     if (cnt == 1) {
         arr_allDots[cnt].color = 0xE0;
@@ -173,10 +172,6 @@ void DispStats(int numLoops) {
     int numDays;
     int recoveryTime;
     int dead = 0;
-    //recoveryTime = arr_allDots[1].recoveryTime;
-    //int arrayNum = 15;
-    //int distance = CheckDistance(cnt,arrayNum);
-    
 
     for (cnt=0; cnt<=maxDots; cnt++) {
         if (arr_allDots[cnt].infected == 1) {
@@ -207,13 +202,13 @@ void DispStats(int numLoops) {
     gfx_PrintStringXY("Dead: ",10,60);
     gfx_PrintInt(dead,1);
 }
-
+//change status 
 void CheckPos() {
     int cnt;
     int arrayNum = 1;
     int distance;
     for (cnt=0; cnt<=maxDots; cnt++) {
-        for (arrayNum=0;arrayNum <= maxDots;arrayNum++) {
+        for (arrayNum=cnt;arrayNum <= maxDots;arrayNum++) {
             
             distance = CheckDistance(cnt,arrayNum);
             if (distance < 13) {
@@ -234,10 +229,11 @@ int CheckDistance(int cnt, int arrayNum) {
     int ysqr;
     int distance;
 
+    x1 = arr_allDots[cnt].x;
+
     xsqr = (x2-x1) * (x2-x1);
     ysqr= (y2-y1) * (y2-y1);
 
-    //distance formula
     distance = (sqrt(xsqr + ysqr));
     return distance;
 }
