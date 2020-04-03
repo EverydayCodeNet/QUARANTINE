@@ -37,24 +37,26 @@ void createDots() {
   int idx;
 
   for (idx = 0; idx <= maxDots; idx++) {
-    dots[idx].x = randInt(0, 312);
-    dots[idx].y = randInt(0, 232);
-    dots[idx].i = 4;
-    dots[idx].dir = randInt(1, 8);
-    dots[idx].speed = randInt(4, 8);
+    // pointer to the element in list
+    dot_t* dot = &(dots[idx]);
+    dot->x = randInt(0, 312);
+    dot->y = randInt(0, 232);
+    dot->i = 4;
+    dot->dir = randInt(1, 8);
+    dot->speed = randInt(4, 8);
 
     if (idx == 1) {
-      dots[idx].color = 0xE0;
-      dots[idx].recoveryTime = randInt(140, 210);
-      dots[idx].infected = 1;
+      dot->color = 0xE0;
+      dot->recoveryTime = randInt(140, 210);
+      dot->infected = 1;
     } else {
-      dots[idx].color = 0x1aef6f;
-      dots[idx].recoveryTime = -1000;
-      dots[idx].infected = 0;
+      dot->color = 0x1aef6f;
+      dot->recoveryTime = -1000;
+      dot->infected = 0;
     }
 
-    gfx_SetColor(dots[idx].color);
-    gfx_FillCircle(dots[idx].x, dots[idx].y, dots[idx].i);
+    gfx_SetColor(dot->color);
+    gfx_FillCircle(dot->x, dot->y, dot->i);
   }
 }
 
@@ -62,42 +64,42 @@ void checkWalls() {
   int idx;
   //change direction
   for (idx = 0; idx <= maxDots; idx++) {
-    if (dots[idx].x < 7) {
+    dot_t* dot = &(dots[idx]);
+    if (dot->x < 7) {
+      if (dot->dir == 3) {
+        dot->dir = 1;
+      } else if (dot->dir == 7) {
+        dot->dir = 5;
+      } else if (dot->dir == 4) {
+        dot->dir = 2;
+      }
+    }
+    if (dot->x > 312) {
+      if (dot->dir == 1) {
+        dot->dir = 3;
+      } else if (dot->dir == 2) {
+        dot->dir = 4;
+      } else if (dot->dir == 5) {
+        dot->dir = 7;
+      }
+    }
 
-      if (dots[idx].dir == 3) {
-        dots[idx].dir = 1;
-      } else if (dots[idx].dir == 7) {
-        dots[idx].dir = 5;
-      } else if (dots[idx].dir == 4) {
-        dots[idx].dir = 2;
+    if (dot->y < 7) {
+      if (dot->dir == 2) {
+        dot->dir = 1;
+      } else if (dot->dir == 8) {
+        dot->dir = 6;
+      } else if (dot->dir == 4) {
+        dot->dir = 3;
       }
     }
-    if (dots[idx].x > 312) {
-      if (dots[idx].dir == 1) {
-        dots[idx].dir = 3;
-      } else if (dots[idx].dir == 2) {
-        dots[idx].dir = 4;
-      } else if (dots[idx].dir == 5) {
-        dots[idx].dir = 7;
-      }
-    }
-
-    if (dots[idx].y < 7) {
-      if (dots[idx].dir == 2) {
-        dots[idx].dir = 1;
-      } else if (dots[idx].dir == 8) {
-        dots[idx].dir = 6;
-      } else if (dots[idx].dir == 4) {
-        dots[idx].dir = 3;
-      }
-    }
-    if (dots[idx].y > 232) {
-      if (dots[idx].dir == 1) {
-        dots[idx].dir = 2;
-      } else if (dots[idx].dir == 6) {
-        dots[idx].dir = 8;
-      } else if (dots[idx].dir == 3) {
-        dots[idx].dir = 4;
+    if (dot->y > 232) {
+      if (dot->dir == 1) {
+        dot->dir = 2;
+      } else if (dot->dir == 6) {
+        dot->dir = 8;
+      } else if (dot->dir == 3) {
+        dot->dir = 4;
       }
     }
   }
@@ -106,30 +108,27 @@ void checkWalls() {
 void moveDots() {
   int idx;
   for (idx = 0; idx <= maxDots; idx++) {
-    if (dots[idx].dir == 1) {
-      dots[idx].x = dots[idx].x + dots[idx].speed;
-      dots[idx].y = dots[idx].y + dots[idx].speed;
-    } else if (dots[idx].dir == 2) {
-      dots[idx].x = dots[idx].x + dots[idx].speed;
-      dots[idx].y = dots[idx].y - dots[idx].speed;
-    } else if (dots[idx].dir == 3) {
-      dots[idx].x = dots[idx].x - dots[idx].speed;
-      dots[idx].y = dots[idx].y + dots[idx].speed;
-    } else if (dots[idx].dir == 4) {
-      dots[idx].x = dots[idx].x - dots[idx].speed;
-      dots[idx].y = dots[idx].y - dots[idx].speed;
-    } else if (dots[idx].dir == 5) {
-      dots[idx].x = dots[idx].x + dots[idx].speed;
-      dots[idx].y = dots[idx].y;
-    } else if (dots[idx].dir == 6) {
-      dots[idx].x = dots[idx].x;
-      dots[idx].y = dots[idx].y + dots[idx].speed;
-    } else if (dots[idx].dir == 7) {
-      dots[idx].x = dots[idx].x - dots[idx].speed;
-      dots[idx].y = dots[idx].y;
-    } else if (dots[idx].dir == 8) {
-      dots[idx].x = dots[idx].x;
-      dots[idx].y = dots[idx].y - dots[idx].speed;
+    dot_t* dot = &(dots[idx]);
+    if (dot->dir == 1) {
+      dot->x = dot->x + dot->speed;
+      dot->y = dot->y + dot->speed;
+    } else if (dot->dir == 2) {
+      dot->x = dot->x + dot->speed;
+      dot->y = dot->y - dot->speed;
+    } else if (dot->dir == 3) {
+      dot->x = dot->x - dot->speed;
+      dot->y = dot->y + dot->speed;
+    } else if (dot->dir == 4) {
+      dot->x = dot->x - dot->speed;
+      dot->y = dot->y - dot->speed;
+    } else if (dot->dir == 5) {
+      dot->x = dot->x + dot->speed;
+    } else if (dot->dir == 6) {
+      dot->y = dot->y + dot->speed;
+    } else if (dot->dir == 7) {
+      dot->x = dot->x - dot->speed;
+    } else if (dot->dir == 8) {
+      dot->y = dot->y - dot->speed;
     }
   }
 }
@@ -138,23 +137,23 @@ void drawDots() {
   int idx;
 
   for (idx = 0; idx <= maxDots; idx++) {
-
-    gfx_SetColor(dots[idx].color);
-    gfx_FillCircle(dots[idx].x, dots[idx].y, dots[idx].i);
+    dot_t dot = dots[idx]; // don't need a pointer since we aren't modifying
+    gfx_SetColor(dot.color);
+    gfx_FillCircle(dot.x, dot.y, dot.i);
 
   }
   gfx_SetDrawBuffer();
 }
 
 void clearDots() {
-  int idx;
+  // int idx;
 
-  for (idx = 0; idx <= maxDots; idx++) {
+  // for (idx = 0; idx <= maxDots; idx++) {
     //Collision Detection
     //gfx_SetColor(255);
     gfx_FillScreen(255);
-    //gfx_FillCircle_NoClip(dots[idx].x, dots[idx].y,dots[idx].i);
-  }
+    //gfx_FillCircle_NoClip(dot->x, dot->y,dot->i);
+  // }
 }
 
 void dispStats(int numLoops) {
@@ -163,24 +162,24 @@ void dispStats(int numLoops) {
   int recovered = 0;
   int idx;
   int numDays;
-  int recoveryTime;
   int dead = 0;
   //recoveryTime = dots[1].recoveryTime;
   //int otherIdx = 15;
   //int distance = CheckDistance(idx,otherIdx);
 
   for (idx = 0; idx <= maxDots; idx++) {
-    if (dots[idx].infected == 1) {
+    dot_t dot = dots[idx];
+    if (dot.infected == 1) {
       sick++;
-    } else if (dots[idx].infected == 0) {
+    } else if (dot.infected == 0) {
       healthy++;
-    } else if (dots[idx].infected == 2) {
+    } else if (dot.infected == 2) {
       recovered++;
-    } else if (dots[idx].infected == 3) {
+    } else if (dot.infected == 3) {
       dead++;
     }
   }
-  gfx_SetTextScale(2.5, 2.5);
+  gfx_SetTextScale(2, 2);
   numDays = numLoops / 30 + 1;
   gfx_PrintStringXY("Day ", 10, 10);
   if (numDays > 10) {
@@ -188,7 +187,7 @@ void dispStats(int numLoops) {
   } else {
     gfx_PrintInt(numDays, 1);
   }
-  gfx_SetTextScale(1.75, 1.75);
+  gfx_SetTextScale(1, 1);
   gfx_PrintStringXY("Healthy: ", 10, 30);
   gfx_PrintInt(healthy, 1);
   gfx_PrintStringXY("Sick: ", 10, 40);
@@ -198,7 +197,7 @@ void dispStats(int numLoops) {
   gfx_PrintStringXY("Dead: ", 10, 60);
   gfx_PrintInt(dead, 1);
 }
-//change status 
+//change status
 void checkPos() {
   int idx;
   int otherIdx = 1;
@@ -216,10 +215,12 @@ void checkPos() {
 }
 
 int checkDistance(int idx, int otherIdx) {
-  int x1 = dots[idx].x;
-  int y1 = dots[idx].y;
-  int x2 = dots[otherIdx].x;
-  int y2 = dots[otherIdx].y;
+  dot_t dot = dots[idx];
+  dot_t otherDot = dots[otherIdx];
+  int x1 = dot.x;
+  int y1 = dot.y;
+  int x2 = otherDot.x;
+  int y2 = otherDot.y;
   int xsqr;
   int ysqr;
   int distance;
@@ -234,49 +235,53 @@ int checkDistance(int idx, int otherIdx) {
 
 void changeDirection(int idx) {
   //current direction of dot 1 and dot 2
+  dot_t dot = dots[idx];
   int cDir1;
 
-  cDir1 = dots[idx].dir;
+  cDir1 = dot.dir;
 }
 
 void checkStatus() {
   int idx;
-  int recoveryTime;
   for (idx = 0; idx <= maxDots; idx++) {
-    //recoveryTime = dots[idx].recoveryTime;
+    dot_t* dot = &(dots[idx]);
+    //recoveryTime = dot->recoveryTime;
 
-    if (dots[idx].infected == 1) {
-      dots[idx].color = 0xE0;
-      dots[idx].recoveryTime = dots[idx].recoveryTime - 1;
+    if (dot->infected == 1) {
+      dot->color = 0xE0;
+      dot->recoveryTime = dot->recoveryTime - 1;
     }
 
-    if (dots[idx].recoveryTime == 0 && dots[idx].dead == 0) {
-      dots[idx].infected = 2;
-      dots[idx].color = 22;
+    if (dot->recoveryTime == 0 && dot->dead == 0) {
+      dot->infected = 2;
+      dot->color = 22;
 
-    } else if (dots[idx].recoveryTime == 0 && dots[idx].dead == 1) {
-      dots[idx].color = 0;
-      dots[idx].dir = 0;
-      dots[idx].dead = 3;
-      dots[idx].infected = 3;
+    } else if (dot->recoveryTime == 0 && dot->dead == 1) {
+      dot->color = 0;
+      dot->dir = 0;
+      dot->dead = 3;
+      dot->infected = 3;
     }
   }
 }
 
 void changeStatus(int idx, int otherIdx) {
   int deathRate = randInt(1, 10);
-  if (dots[idx].infected == 1 && dots[otherIdx].infected == 0) {
-    dots[otherIdx].infected = 1;
-    dots[otherIdx].recoveryTime = (140, 210);
+  dot_t* dot = &(dots[idx]);
+  dot_t* otherDot = &(dots[otherIdx]);
+
+  if (dot->infected == 1 && otherDot->infected == 0) {
+    otherDot->infected = 1;
+    otherDot->recoveryTime = randInt(140, 210);
     if (deathRate < 3) {
-      dots[otherIdx].dead = 1;
+      otherDot->dead = 1;
     }
 
-  } else if (dots[otherIdx].infected == 0 && dots[idx].infected == 1) {
-    dots[idx].infected = 1;
-    dots[idx].recoveryTime = randInt(140, 210);
+  } else if (otherDot->infected == 0 && dot->infected == 1) {
+    dot->infected = 1;
+    dot->recoveryTime = randInt(140, 210);
     if (deathRate < 3) {
-      dots[otherIdx].dead = 1;
+      otherDot->dead = 1;
     }
   }
 
@@ -290,10 +295,7 @@ void mainMenu(int menuPos, kb_key_t key) {
 }
 
 void main(void) {
-  kb_key_t key;
   int numLoops = 0;
-  int menuPos = 1;
-  int xCenter;
   gfx_Begin();
 
   srand(rtc_Time());
@@ -302,7 +304,7 @@ void main(void) {
 
   //game loop
   do {
-    numLoops = numLoops++;
+    numLoops++;
     checkPos();
     checkWalls();
     checkStatus();
