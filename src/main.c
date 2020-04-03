@@ -26,7 +26,7 @@ typedef struct {
 } dot_t;
 
 // maxDots = # of dots - 1, arr[size]
-int checkDistance(int idx, int otherIdx);
+int checkDistance(dot_t* dot, dot_t* otherDot);
 void changeStatus();
 void changeDirection();
 
@@ -66,22 +66,11 @@ void checkWalls() {
   for (idx = 0; idx <= maxDots; idx++) {
     dot_t* dot = &(dots[idx]);
     if (dot->x < 7) {
-      if (dot->dir == 3) {
-        dot->dir = 1;
-      } else if (dot->dir == 7) {
-        dot->dir = 5;
-      } else if (dot->dir == 4) {
-        dot->dir = 2;
-      }
+      dot->dir -= 2;
     }
+
     if (dot->x > 312) {
-      if (dot->dir == 1) {
-        dot->dir = 3;
-      } else if (dot->dir == 2) {
-        dot->dir = 4;
-      } else if (dot->dir == 5) {
-        dot->dir = 7;
-      }
+      dot->dir += 2;
     }
 
     if (dot->y < 7) {
@@ -201,36 +190,36 @@ void dispStats(int numLoops) {
 void checkPos() {
   int idx;
   int otherIdx = 1;
-  int distance;
+  int distancesqr;
   for (idx = 0; idx <= maxDots; idx++) {
+    dot_t* dot = &(dots[idx]);
     for (otherIdx = idx; otherIdx <= maxDots; otherIdx++) {
+      dot_t* otherDot = &(dots[otherIdx]);
 
-      distance = checkDistance(idx, otherIdx);
-      if (distance < 13) {
-        changeStatus(idx, otherIdx);
+      distancesqr = checkDistance(dot, otherDot);
+      if (distancesqr < 13*13) {
+        changeStatus(dot, otherDot);
         //ChangeDirection(idx);
       }
     }
   }
 }
 
-int checkDistance(int idx, int otherIdx) {
-  dot_t dot = dots[idx];
-  dot_t otherDot = dots[otherIdx];
-  int x1 = dot.x;
-  int y1 = dot.y;
-  int x2 = otherDot.x;
-  int y2 = otherDot.y;
+int checkDistance(dot_t* dot, dot_t* otherDot) {
+  int x1 = dot->x;
+  int y1 = dot->y;
+  int x2 = otherDot->x;
+  int y2 = otherDot->y;
   int xsqr;
   int ysqr;
-  int distance;
+  int distancesqr;
 
   xsqr = (x2 - x1) * (x2 - x1);
   ysqr = (y2 - y1) * (y2 - y1);
 
   //distance formula
-  distance = (sqrt(xsqr + ysqr));
-  return distance;
+  distancesqr = xsqr + ysqr;
+  return distancesqr;
 }
 
 void changeDirection(int idx) {
@@ -265,10 +254,8 @@ void checkStatus() {
   }
 }
 
-void changeStatus(int idx, int otherIdx) {
+void changeStatus(dot_t* dot, dot_t* otherDot) {
   int deathRate = randInt(1, 10);
-  dot_t* dot = &(dots[idx]);
-  dot_t* otherDot = &(dots[otherIdx]);
 
   if (dot->infected == 1 && otherDot->infected == 0) {
     otherDot->infected = 1;
